@@ -1,7 +1,7 @@
 import React from 'react'
 import { Canvas } from '@react-three/fiber'
 import Layout from './components/Layout'
-import Experience from './3d/Experience'
+import Experience from './3d/ExperienceScene'
 
 function App() {
   return (

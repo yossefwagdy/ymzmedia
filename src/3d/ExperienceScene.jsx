@@ -4,8 +4,6 @@ import { Float, PerspectiveCamera, MeshDistortMaterial, useScroll, ScrollControl
 import * as THREE from 'three';
 import Overlay from '../components/Overlay';
 
-
-
 const MorphingMesh = () => {
   const meshRef = useRef();
   const materialRef = useRef();
