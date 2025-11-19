@@ -93,25 +93,6 @@ button {
   line-height: 0.9;
   margin-bottom: 1rem;
 }
-
-.section-title {
-  font-size: clamp(2.5rem, 6vw, 4rem);
-  margin-bottom: 2rem;
-}
-
-.services-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-  max-width: 1000px;
-  width: 100%;
-}
-
-.portfolio-grid {
-  display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
-  flex-wrap: wrap;
 }
 
 .portfolio-item {
