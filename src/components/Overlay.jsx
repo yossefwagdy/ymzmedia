@@ -103,6 +103,19 @@ const Overlay = () => {
                     </div>
                 </motion.div>
             </Section>
+
+            <footer style={{
+                textAlign: 'center',
+                padding: '2rem',
+                opacity: 0.5,
+                fontSize: '0.9rem',
+                marginTop: 'auto',
+                width: '100%',
+                position: 'absolute',
+                bottom: 0
+            }}>
+                <p>&copy; {new Date().getFullYear()} YMZ Media. All rights reserved.</p>
+            </footer>
         </Scroll>
     );
 };

@@ -19,12 +19,6 @@ const Layout = ({ children }) => {
             <main className="main-content">
                 {children}
             </main>
-
-            <footer className="footer">
-                <div className="container flex-center" style={{ height: '60px', borderTop: '1px solid var(--secondary-color)' }}>
-                    <p>&copy; {new Date().getFullYear()} YMZ Media. All rights reserved.</p>
-                </div>
-            </footer>
         </div>
     );
 };
