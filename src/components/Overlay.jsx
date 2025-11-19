@@ -62,16 +62,20 @@ const Overlay = () => {
                     initial={{ opacity: 0, x: 50 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     transition={{ duration: 1 }}
-                    style={{ width: '100%' }}
+                    style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}
                 >
                     <h2 className="section-title">PORTFOLIO</h2>
                     <p style={{ fontSize: '1.5rem', opacity: 0.7, maxWidth: '600px', marginBottom: '2rem', marginLeft: 'auto' }}>
-                        We've worked with top brands and creators to deliver stunning visuals and results.
+                        Selected works showcasing our expertise in visual storytelling.
                     </p>
                     <div className="portfolio-grid">
-                        <div className="portfolio-item"></div>
-                        <div className="portfolio-item"></div>
-                        <div className="portfolio-item"></div>
+                        {[1, 2, 3, 4].map((item) => (
+                            <div key={item} className="portfolio-item">
+                                <div className="portfolio-overlay">
+                                    <span className="portfolio-title">Project Name {item}</span>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </motion.div>
             </Section>
@@ -81,26 +85,22 @@ const Overlay = () => {
                     initial={{ opacity: 0, scale: 0.9 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 1 }}
-                    style={{ textAlign: 'center' }}
+                    className="contact-container"
                 >
-                    <h2 className="section-title">LET'S TALK</h2>
-                    <p style={{ fontSize: '1.5rem', opacity: 0.7, marginBottom: '3rem' }}>
-                        Ready to elevate your brand?
+                    <h2 className="section-title" style={{ marginBottom: '1rem' }}>LET'S CREATE TOGETHER</h2>
+                    <p style={{ fontSize: '1.2rem', opacity: 0.7, marginBottom: '2rem' }}>
+                        Ready to elevate your brand? Drop us a line and let's discuss your next big project.
                     </p>
-                    <a
-                        href="mailto:contact@ymzmedia.com"
-                        style={{
-                            padding: '1rem 3rem',
-                            fontSize: '1.2rem',
-                            background: '#fff',
-                            color: '#000',
-                            borderRadius: '50px',
-                            fontWeight: 600,
-                            display: 'inline-block'
-                        }}
-                    >
+                    <a href="mailto:contact@ymzmedia.com" className="contact-btn">
                         Get in Touch
                     </a>
+
+                    <div className="social-links">
+                        <a href="#" className="social-link">Instagram</a>
+                        <a href="#" className="social-link">LinkedIn</a>
+                        <a href="#" className="social-link">Twitter</a>
+                        <a href="#" className="social-link">YouTube</a>
+                    </div>
                 </motion.div>
             </Section>
         </Scroll>
