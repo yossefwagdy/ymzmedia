@@ -1,8 +1,8 @@
-```javascript
 import React, { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Float, PerspectiveCamera, MeshDistortMaterial, useScroll, ScrollControls } from '@react-three/drei';
 import * as THREE from 'three';
+import Overlay from '../components/Overlay';
 
 const MorphingMesh = () => {
   const meshRef = useRef();
@@ -23,7 +23,7 @@ const MorphingMesh = () => {
       // Morph distortion based on scroll
       // Base distortion + scroll influence
       materialRef.current.distort = 0.4 + scrollOffset * 0.6;
-      
+
       // Color shift based on scroll
       const color = new THREE.Color('#646cff').lerp(new THREE.Color('#ff64b0'), scrollOffset);
       materialRef.current.color = color;
@@ -47,8 +47,6 @@ const MorphingMesh = () => {
   );
 };
 
-import Overlay from '../components/Overlay';
-
 const Experience = () => {
   return (
     <ScrollControls pages={4} damping={0.3}>
@@ -63,4 +61,3 @@ const Experience = () => {
 };
 
 export default Experience;
-```
