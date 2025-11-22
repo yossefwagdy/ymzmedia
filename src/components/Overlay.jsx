@@ -135,7 +135,7 @@ const Overlay = () => {
             <Section style={{ height: 'auto', padding: '4rem 0' }}>
                 <div style={{ width: '100%', maxWidth: '1000px', margin: '0 auto' }}>
                     <PartnerGrid title="TRUSTED BY" items={['Client A', 'Client B', 'Client C', 'Client D', 'Client E']} />
-                    <PartnerGrid title="OUR PARTNERS" items={['Partner X', 'Partner Y', 'Partner Z']} />
+                    <PartnerGrid title="OUR PARTNERS" items={['Google', 'YouTube', 'Google Ads']} />
                 </div>
             </Section>
 

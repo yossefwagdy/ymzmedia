@@ -11,7 +11,7 @@ const Counter = ({ value, label, suffix = '' }) => {
         if (isInView) {
             let start = 0;
             const end = parseInt(value.toString().replace(/\D/g, ''));
-            const duration = 2000;
+            const duration = 1000; // Faster animation (1s)
             const incrementTime = (duration / end) * 10;
 
             const timer = setInterval(() => {

@@ -1,5 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { FaGoogle, FaYoutube, FaAd } from 'react-icons/fa';
+import { SiGoogleads } from 'react-icons/si';
 
 const PartnerGrid = ({ title, items }) => {
     return (
@@ -37,11 +39,18 @@ const PartnerGrid = ({ title, items }) => {
                             justifyContent: 'center',
                             backdropFilter: 'blur(5px)',
                             border: '1px solid rgba(255,255,255,0.1)',
-                            cursor: 'pointer'
+                            cursor: 'pointer',
+                            fontSize: '2rem',
+                            color: '#fff'
                         }}
                     >
-                        {/* Placeholder for Logo */}
-                        <span style={{ opacity: 0.5, fontWeight: 'bold' }}>{item}</span>
+                        {item === 'Google' && <FaGoogle />}
+                        {item === 'YouTube' && <FaYoutube />}
+                        {item === 'Google Ads' && <SiGoogleads />}
+                        {/* Fallback for text items */}
+                        {!['Google', 'YouTube', 'Google Ads'].includes(item) && (
+                            <span style={{ opacity: 0.5, fontWeight: 'bold', fontSize: '1rem' }}>{item}</span>
+                        )}
                     </motion.div>
                 ))}
             </div>
