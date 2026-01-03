@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 
 const Counter = ({ value, label, suffix = '' }) => {
@@ -72,22 +71,39 @@ const Counter = ({ value, label, suffix = '' }) => {
 };
 
 const StatsCounter = () => {
-    const { t } = useLanguage();
+    const { language, isRTL, t } = useLanguage();
+
+    // Force re-render when language changes by using language as key
+    const stats = [
+        { value: "50", suffix: "+", labelKey: 'happyClients' },
+        { value: "100", suffix: "+", labelKey: 'projectsDone' },
+        { value: "5", suffix: "+", labelKey: 'yearsExperience' },
+        { value: "10", suffix: "M+", labelKey: 'viewsGenerated' },
+    ];
 
     return (
-        <div className="stats-container" style={{
-            display: 'flex',
-            justifyContent: 'space-around',
-            width: '100%',
-            maxWidth: '1100px',
-            margin: '0 auto',
-            flexWrap: 'wrap',
-            gap: '2rem'
-        }}>
-            <Counter value="50" suffix="+" label={t('happyClients')} />
-            <Counter value="100" suffix="+" label={t('projectsDone')} />
-            <Counter value="5" suffix="+" label={t('yearsExperience')} />
-            <Counter value="10" suffix="M+" label={t('viewsGenerated')} />
+        <div
+            key={language}
+            className="stats-container"
+            style={{
+                display: 'flex',
+                justifyContent: 'space-around',
+                width: '100%',
+                maxWidth: '1100px',
+                margin: '0 auto',
+                flexWrap: 'wrap',
+                gap: '2rem',
+                direction: isRTL ? 'rtl' : 'ltr',
+            }}
+        >
+            {stats.map((stat, index) => (
+                <Counter
+                    key={`${language}-${index}`}
+                    value={stat.value}
+                    suffix={stat.suffix}
+                    label={t(stat.labelKey)}
+                />
+            ))}
         </div>
     );
 };

@@ -196,7 +196,7 @@ const SceneContent = () => {
 
 const Experience = () => {
   return (
-    <ScrollControls pages={5} damping={0.25}>
+    <ScrollControls pages={6.3} damping={0.25}>
       <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={60} />
 
       {/* Deep space background */}

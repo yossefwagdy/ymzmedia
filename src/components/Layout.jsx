@@ -9,14 +9,8 @@ const Layout = ({ children }) => {
         e.preventDefault();
         const element = document.getElementById(sectionId);
         if (element) {
-            const headerOffset = 100;
-            const elementPosition = element.getBoundingClientRect().top;
-            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-            window.scrollTo({
-                top: offsetPosition,
-                behavior: 'smooth'
-            });
+            // Use scrollIntoView which works better with various scroll containers
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     };
 
@@ -34,6 +28,15 @@ const Layout = ({ children }) => {
                 initial={{ y: -100, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
+                style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    zIndex: 1000,
+                    background: 'linear-gradient(180deg, rgba(5, 5, 16, 0.9) 0%, rgba(5, 5, 16, 0.7) 70%, transparent 100%)',
+                    backdropFilter: 'blur(10px)',
+                }}
             >
                 <div className="container flex-center" style={{
                     justifyContent: 'space-between',
@@ -48,6 +51,7 @@ const Layout = ({ children }) => {
                         onClick={(e) => {
                             e.preventDefault();
                             window.scrollTo({ top: 0, behavior: 'smooth' });
+                            document.documentElement.scrollTo({ top: 0, behavior: 'smooth' });
                         }}
                         className="logo"
                         whileHover={{ scale: 1.05 }}
