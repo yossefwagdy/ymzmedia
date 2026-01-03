@@ -1,59 +1,65 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FaGoogle, FaYoutube, FaAd } from 'react-icons/fa';
+import { FaGoogle, FaYoutube, FaMeta, FaTiktok } from 'react-icons/fa6';
 import { SiGoogleads } from 'react-icons/si';
 
-const PartnerGrid = ({ title, items }) => {
+const PartnerGrid = ({ items }) => {
+    const getIcon = (item) => {
+        switch (item) {
+            case 'Google': return <FaGoogle />;
+            case 'YouTube': return <FaYoutube />;
+            case 'Google Ads': return <SiGoogleads />;
+            case 'Meta': return <FaMeta />;
+            case 'TikTok': return <FaTiktok />;
+            default: return null;
+        }
+    };
+
     return (
-        <div className="partner-section" style={{ width: '100%', marginBottom: '4rem' }}>
-            <h3 style={{
-                fontSize: '1.5rem',
-                marginBottom: '2rem',
-                opacity: 0.8,
-                textAlign: 'center',
-                letterSpacing: '0.2em'
-            }}>
-                {title}
-            </h3>
-            <div className="partner-grid" style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-                gap: '2rem',
-                alignItems: 'center',
-                justifyItems: 'center'
-            }}>
-                {items.map((item, index) => (
-                    <motion.div
-                        key={index}
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.1 }}
-                        whileHover={{ scale: 1.1, filter: 'brightness(1.2)' }}
-                        style={{
-                            width: '100%',
-                            height: '80px',
-                            background: 'rgba(255,255,255,0.05)',
-                            borderRadius: '10px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            backdropFilter: 'blur(5px)',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            cursor: 'pointer',
-                            fontSize: '2rem',
-                            color: '#fff'
-                        }}
-                    >
-                        {item === 'Google' && <FaGoogle />}
-                        {item === 'YouTube' && <FaYoutube />}
-                        {item === 'Google Ads' && <SiGoogleads />}
-                        {/* Fallback for text items */}
-                        {!['Google', 'YouTube', 'Google Ads'].includes(item) && (
-                            <span style={{ opacity: 0.5, fontWeight: 'bold', fontSize: '1rem' }}>{item}</span>
-                        )}
-                    </motion.div>
-                ))}
-            </div>
+        <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+            gap: '1rem',
+            alignItems: 'center',
+            justifyItems: 'center'
+        }}>
+            {items.map((item, index) => (
+                <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.08 }}
+                    whileHover={{
+                        scale: 1.05,
+                        y: -5,
+                        borderColor: 'rgba(0, 245, 255, 0.5)',
+                    }}
+                    style={{
+                        width: '100%',
+                        height: '70px',
+                        background: 'linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01))',
+                        borderRadius: '14px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        border: '1px solid rgba(255,255,255,0.08)',
+                        cursor: 'pointer',
+                        fontSize: '1.8rem',
+                        color: '#fff',
+                        transition: 'all 0.3s ease',
+                    }}
+                >
+                    {getIcon(item) || (
+                        <span style={{
+                            opacity: 0.5,
+                            fontWeight: '600',
+                            fontSize: '0.85rem',
+                        }}>
+                            {item}
+                        </span>
+                    )}
+                </motion.div>
+            ))}
         </div>
     );
 };
