@@ -154,12 +154,21 @@ function App() {
               <Suspense fallback={<CanvasLoader />}>
                 <Canvas
                   gl={{
-                    antialias: false, // Disable for better performance
+                    antialias: false,
                     powerPreference: 'high-performance',
                     alpha: false,
+                    preserveDrawingBuffer: false,
                   }}
-                  dpr={[1, 1.5]} // Limit device pixel ratio
-                  performance={{ min: 0.5 }} // Allow frame rate drops
+                  dpr={[1, 1.5]}
+                  performance={{ min: 0.5 }}
+                  resize={{ scroll: false, debounce: { scroll: 50, resize: 100 } }}
+                  flat
+                  onCreated={({ gl }) => {
+                    // Prevent forced reflow by scheduling resize
+                    gl.setSize = ((original) => (...args) => {
+                      requestAnimationFrame(() => original.apply(gl, args));
+                    })(gl.setSize.bind(gl));
+                  }}
                 >
                   <Experience />
                 </Canvas>
