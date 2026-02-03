@@ -1,9 +1,31 @@
 import React, { useEffect, useRef, useState, memo, useMemo, useCallback } from 'react';
 import { Scroll } from '@react-three/drei';
+import { motion } from 'framer-motion';
 import StatsCounter from './StatsCounter';
 import PartnerGrid from './PartnerGrid';
 import { useLanguage } from '../context/LanguageContext';
-import { motion, useInView, ScrollIndicator } from '../utils/motion';
+
+// Local useInView hook for Card
+const useInView = (threshold = 0.1) => {
+    const ref = useRef(null);
+    const [isInView, setIsInView] = useState(false);
+    useEffect(() => {
+        const element = ref.current;
+        if (!element) return;
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsInView(true);
+                    observer.disconnect();
+                }
+            },
+            { threshold }
+        );
+        observer.observe(element);
+        return () => observer.disconnect();
+    }, [threshold]);
+    return [ref, isInView];
+};
 
 const Section = memo(({ children, className, id, ...props }) => {
     return (

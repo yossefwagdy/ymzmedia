@@ -1,15 +1,10 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 
 const Layout = memo(({ children }) => {
     const { language, isRTL, t, toggleLanguage } = useLanguage();
-    const [headerVisible, setHeaderVisible] = useState(false);
-
-    useEffect(() => {
-        // Animate header on mount
-        const timer = setTimeout(() => setHeaderVisible(true), 200);
-        return () => clearTimeout(timer);
-    }, []);
+    // Header visible immediately for better LCP
+    const [headerVisible] = useState(true);
 
     const scrollToSection = (e, sectionId) => {
         e.preventDefault();

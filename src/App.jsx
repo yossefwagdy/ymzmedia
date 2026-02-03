@@ -98,33 +98,22 @@ const LayoutFallback = memo(() => (
 ));
 
 function App() {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false); // Start as false for instant LCP
   const [showCanvas, setShowCanvas] = useState(false);
   const { isRTL } = useLanguage();
 
+  // Defer 3D canvas loading
   useEffect(() => {
-    // Fast initial load
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 600);
-    return () => clearTimeout(timer);
-  }, []);
+    const loadCanvas = () => {
+      setShowCanvas(true);
+    };
 
-  // Defer 3D canvas loading significantly
-  useEffect(() => {
-    if (!isLoading) {
-      // Use requestIdleCallback for non-critical 3D loading
-      const loadCanvas = () => {
-        setShowCanvas(true);
-      };
-
-      if ('requestIdleCallback' in window) {
-        window.requestIdleCallback(loadCanvas, { timeout: 2000 });
-      } else {
-        setTimeout(loadCanvas, 500);
-      }
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(loadCanvas, { timeout: 1500 });
+    } else {
+      setTimeout(loadCanvas, 300);
     }
-  }, [isLoading]);
+  }, []);
 
   // Update document direction
   useEffect(() => {
