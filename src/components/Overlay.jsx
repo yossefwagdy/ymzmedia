@@ -386,13 +386,8 @@ const Overlay = () => {
         <Scroll html style={{ width: '100%', height: '100%' }}>
             {/* Hero Section */}
             <Section>
-                <motion.div
-                    initial={{ opacity: 0, y: 60 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 1.2, delay: 0.3 }}
-                    style={{ textAlign: 'center' }}
-                >
-                    <motion.h1
+                <div style={{ textAlign: 'center' }}>
+                    <h1
                         className="hero-title"
                         style={{
                             fontSize: 'clamp(4rem, 12vw, 9rem)',
@@ -403,12 +398,9 @@ const Overlay = () => {
                         }}
                     >
                         YMZ <br /> MEDIA
-                    </motion.h1>
+                    </h1>
 
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.6 }}
+                    <p
                         style={{
                             fontSize: 'clamp(1rem, 2vw, 1.3rem)',
                             opacity: 0.7,
@@ -418,17 +410,10 @@ const Overlay = () => {
                         }}
                     >
                         {t('heroSubtitle')}
-                    </motion.p>
+                    </p>
 
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 1.5 }}
-                        style={{ marginTop: '4rem' }}
-                    >
-                        <motion.div
-                            animate={{ y: [0, 8, 0] }}
-                            transition={{ duration: 1.5, repeat: Infinity }}
+                    <div style={{ marginTop: '4rem' }}>
+                        <div
                             style={{
                                 width: '28px',
                                 height: '45px',
@@ -438,11 +423,10 @@ const Overlay = () => {
                                 display: 'flex',
                                 justifyContent: 'center',
                                 paddingTop: '8px',
+                                animation: 'bounce 1.5s infinite',
                             }}
                         >
-                            <motion.div
-                                animate={{ y: [0, 10, 0], opacity: [1, 0.3, 1] }}
-                                transition={{ duration: 1.5, repeat: Infinity }}
+                            <div
                                 style={{
                                     width: '3px',
                                     height: '10px',
@@ -450,9 +434,9 @@ const Overlay = () => {
                                     borderRadius: '2px',
                                 }}
                             />
-                        </motion.div>
-                    </motion.div>
-                </motion.div>
+                        </div>
+                    </div>
+                </div>
             </Section>
 
             {/* Services Section */}
