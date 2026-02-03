@@ -1,15 +1,14 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import React, { useEffect, useState, useRef, memo } from 'react';
+import { useInView } from '../utils/motion';
 import { useLanguage } from '../context/LanguageContext';
 
-const Counter = ({ value, label, suffix = '' }) => {
-    const ref = useRef(null);
-    const isInView = useInView(ref, { once: true });
+const Counter = memo(({ value, label, suffix = '' }) => {
+    const [ref, isInViewState] = useInView(0.1);
     const [count, setCount] = useState(0);
     const { isRTL } = useLanguage();
 
     useEffect(() => {
-        if (isInView) {
+        if (isInViewState) {
             let start = 0;
             const end = parseInt(value.toString().replace(/\D/g, ''));
             const duration = 1200;
@@ -26,22 +25,22 @@ const Counter = ({ value, label, suffix = '' }) => {
 
             return () => clearInterval(timer);
         }
-    }, [isInView, value]);
+    }, [isInViewState, value]);
 
     return (
-        <motion.div
+        <div
             ref={ref}
             className="stat-item"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
             style={{
                 textAlign: 'center',
                 padding: '1.5rem',
                 flex: '1 1 200px',
+                opacity: isInViewState ? 1 : 0,
+                transform: isInViewState ? 'translateY(0)' : 'translateY(30px)',
+                transition: 'opacity 0.6s ease, transform 0.6s ease',
             }}
         >
-            <motion.h3
+            <h3
                 style={{
                     fontSize: 'clamp(2.5rem, 5vw, 4rem)',
                     fontWeight: '800',
@@ -55,7 +54,7 @@ const Counter = ({ value, label, suffix = '' }) => {
                 }}
             >
                 {count}{suffix}
-            </motion.h3>
+            </h3>
             <p style={{
                 fontSize: '0.9rem',
                 opacity: 0.6,
@@ -66,14 +65,13 @@ const Counter = ({ value, label, suffix = '' }) => {
             }}>
                 {label}
             </p>
-        </motion.div>
+        </div>
     );
-};
+});
 
-const StatsCounter = () => {
+const StatsCounter = memo(() => {
     const { language, isRTL, t } = useLanguage();
 
-    // Force re-render when language changes by using language as key
     const stats = [
         { value: "50", suffix: "+", labelKey: 'happyClients' },
         { value: "100", suffix: "+", labelKey: 'projectsDone' },
@@ -106,6 +104,6 @@ const StatsCounter = () => {
             ))}
         </div>
     );
-};
+});
 
 export default StatsCounter;

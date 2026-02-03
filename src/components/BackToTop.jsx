@@ -1,31 +1,32 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { memo, useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 
-const BackToTop = () => {
+const BackToTop = memo(() => {
     const { isRTL, t } = useLanguage();
+    const [visible, setVisible] = useState(false);
+    const [isHovered, setIsHovered] = useState(false);
+
+    useEffect(() => {
+        // Show button after initial render
+        const timer = setTimeout(() => setVisible(true), 500);
+        return () => clearTimeout(timer);
+    }, []);
 
     const scrollToTop = () => {
-        // Find the hero section and scroll to it
         const heroSection = document.querySelector('.section-container');
         if (heroSection) {
             heroSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
-
-        // Also try standard scroll methods
         window.scrollTo({ top: 0, behavior: 'smooth' });
-        document.documentElement.scrollTop = 0;
-        document.body.scrollTop = 0;
     };
 
     return (
-        <motion.button
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            whileHover={{ scale: 1.1, boxShadow: '0 0 30px rgba(0, 245, 255, 0.5)' }}
-            whileTap={{ scale: 0.95 }}
+        <button
             onClick={scrollToTop}
             title={t('backToTop')}
+            aria-label={t('backToTop')}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
             style={{
                 position: 'fixed',
                 bottom: '2rem',
@@ -41,9 +42,13 @@ const BackToTop = () => {
                 alignItems: 'center',
                 justifyContent: 'center',
                 zIndex: 9999,
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), 0 0 25px rgba(0, 245, 255, 0.3)',
+                boxShadow: isHovered
+                    ? '0 8px 32px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 245, 255, 0.5)'
+                    : '0 8px 32px rgba(0, 0, 0, 0.4), 0 0 25px rgba(0, 245, 255, 0.3)',
+                opacity: visible ? 1 : 0,
+                transform: isHovered ? 'scale(1.1)' : (visible ? 'scale(1)' : 'scale(0.8)'),
+                transition: 'all 0.3s ease',
             }}
-            aria-label={t('backToTop')}
         >
             <svg
                 width="22"
@@ -57,8 +62,8 @@ const BackToTop = () => {
             >
                 <path d="M18 15l-6-6-6 6" />
             </svg>
-        </motion.button>
+        </button>
     );
-};
+});
 
 export default BackToTop;

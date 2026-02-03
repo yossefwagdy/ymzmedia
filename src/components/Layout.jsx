@@ -1,15 +1,20 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { memo, useEffect, useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 
-const Layout = ({ children }) => {
+const Layout = memo(({ children }) => {
     const { language, isRTL, t, toggleLanguage } = useLanguage();
+    const [headerVisible, setHeaderVisible] = useState(false);
+
+    useEffect(() => {
+        // Animate header on mount
+        const timer = setTimeout(() => setHeaderVisible(true), 200);
+        return () => clearTimeout(timer);
+    }, []);
 
     const scrollToSection = (e, sectionId) => {
         e.preventDefault();
         const element = document.getElementById(sectionId);
         if (element) {
-            // Use scrollIntoView which works better with various scroll containers
             element.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     };
@@ -23,11 +28,8 @@ const Layout = ({ children }) => {
 
     return (
         <div className="layout" dir={isRTL ? 'rtl' : 'ltr'}>
-            <motion.header
+            <header
                 className="header"
-                initial={{ y: -100, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
                 style={{
                     position: 'fixed',
                     top: 0,
@@ -36,6 +38,9 @@ const Layout = ({ children }) => {
                     zIndex: 1000,
                     background: 'linear-gradient(180deg, rgba(5, 5, 16, 0.9) 0%, rgba(5, 5, 16, 0.7) 70%, transparent 100%)',
                     backdropFilter: 'blur(10px)',
+                    transform: headerVisible ? 'translateY(0)' : 'translateY(-100px)',
+                    opacity: headerVisible ? 1 : 0,
+                    transition: 'transform 0.8s ease, opacity 0.8s ease',
                 }}
             >
                 <div className="container flex-center" style={{
@@ -46,15 +51,13 @@ const Layout = ({ children }) => {
                     padding: '0 2rem',
                     flexDirection: isRTL ? 'row-reverse' : 'row',
                 }}>
-                    <motion.a
+                    <a
                         href="#"
                         onClick={(e) => {
                             e.preventDefault();
                             window.scrollTo({ top: 0, behavior: 'smooth' });
-                            document.documentElement.scrollTo({ top: 0, behavior: 'smooth' });
                         }}
                         className="logo"
-                        whileHover={{ scale: 1.05 }}
                         style={{
                             fontFamily: 'Outfit, Inter, sans-serif',
                             fontSize: '1.5rem',
@@ -65,10 +68,13 @@ const Layout = ({ children }) => {
                             backgroundClip: 'text',
                             cursor: 'pointer',
                             textDecoration: 'none',
+                            transition: 'transform 0.3s ease',
                         }}
+                        onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                        onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
                     >
                         YMZ Media
-                    </motion.a>
+                    </a>
 
                     <nav className="nav" style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
                         <ul className="flex-center" style={{
@@ -79,16 +85,17 @@ const Layout = ({ children }) => {
                             flexDirection: isRTL ? 'row-reverse' : 'row',
                         }}>
                             {navItems.map((item, index) => (
-                                <motion.li
+                                <li
                                     key={item.id}
-                                    initial={{ opacity: 0, y: -20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.3 + index * 0.1 }}
+                                    style={{
+                                        opacity: headerVisible ? 1 : 0,
+                                        transform: headerVisible ? 'translateY(0)' : 'translateY(-20px)',
+                                        transition: `opacity 0.4s ease ${0.3 + index * 0.1}s, transform 0.4s ease ${0.3 + index * 0.1}s`,
+                                    }}
                                 >
-                                    <motion.a
+                                    <a
                                         href={`#${item.id}`}
                                         onClick={(e) => scrollToSection(e, item.id)}
-                                        whileHover={{ color: '#00f5ff' }}
                                         style={{
                                             fontSize: '0.85rem',
                                             fontWeight: '500',
@@ -100,18 +107,18 @@ const Layout = ({ children }) => {
                                             textDecoration: 'none',
                                             fontFamily: isRTL ? 'Tajawal, sans-serif' : 'inherit',
                                         }}
+                                        onMouseEnter={(e) => e.currentTarget.style.color = '#00f5ff'}
+                                        onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)'}
                                     >
                                         {item.label}
-                                    </motion.a>
-                                </motion.li>
+                                    </a>
+                                </li>
                             ))}
                         </ul>
 
                         {/* Language Toggle Button */}
-                        <motion.button
+                        <button
                             onClick={toggleLanguage}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
                             style={{
                                 padding: '0.5rem 1rem',
                                 background: 'linear-gradient(135deg, rgba(0, 245, 255, 0.15), rgba(139, 92, 246, 0.15))',
@@ -124,18 +131,20 @@ const Layout = ({ children }) => {
                                 transition: 'all 0.3s ease',
                                 fontFamily: language === 'ar' ? 'Inter, sans-serif' : 'Tajawal, sans-serif',
                             }}
+                            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
                         >
                             {language === 'en' ? 'العربية' : 'English'}
-                        </motion.button>
+                        </button>
                     </nav>
                 </div>
-            </motion.header>
+            </header>
 
             <main className="main-content">
                 {children}
             </main>
         </div>
     );
-};
+});
 
 export default Layout;

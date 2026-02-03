@@ -1,51 +1,53 @@
-import React from 'react';
+import React, { useEffect, useRef, useState, memo, useMemo, useCallback } from 'react';
 import { Scroll } from '@react-three/drei';
-import { motion } from 'framer-motion';
 import StatsCounter from './StatsCounter';
 import PartnerGrid from './PartnerGrid';
 import { useLanguage } from '../context/LanguageContext';
+import { motion, useInView, ScrollIndicator } from '../utils/motion';
 
-const Section = ({ children, className, id, ...props }) => {
+const Section = memo(({ children, className, id, ...props }) => {
     return (
         <section id={id} className={`section-container ${className || ''}`} {...props}>
             {children}
         </section>
     );
-};
+});
 
-const Card = ({ children, className, delay = 0, style = {} }) => (
-    <motion.div
-        initial={{ opacity: 0, y: 40, scale: 0.95 }}
-        whileInView={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.8, delay, ease: [0.25, 0.1, 0.25, 1] }}
-        whileHover={{
-            y: -8,
-            transition: { duration: 0.3 }
-        }}
-        className={`glass-card ${className || ''}`}
-        style={{
-            background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)',
-            backdropFilter: 'blur(20px)',
-            borderRadius: '24px',
-            padding: '2.5rem',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
-            boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.4)',
-            position: 'relative',
-            overflow: 'hidden',
-            ...style,
-        }}
-    >
-        <div style={{
-            position: 'absolute',
-            top: 0,
-            left: '10%',
-            right: '10%',
-            height: '1px',
-            background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
-        }} />
-        {children}
-    </motion.div>
-);
+// CSS-only animated card - no framer-motion
+const Card = memo(({ children, className, delay = 0, style = {} }) => {
+    const [ref, isInView] = useInView(0.1);
+
+    return (
+        <div
+            ref={ref}
+            className={`glass-card ${className || ''}`}
+            style={{
+                background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)',
+                backdropFilter: 'blur(20px)',
+                borderRadius: '24px',
+                padding: '2.5rem',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.4)',
+                position: 'relative',
+                overflow: 'hidden',
+                opacity: isInView ? 1 : 0,
+                transform: isInView ? 'translateY(0) scale(1)' : 'translateY(40px) scale(0.95)',
+                transition: `opacity 0.6s ease ${delay}s, transform 0.6s ease ${delay}s`,
+                ...style,
+            }}
+        >
+            <div style={{
+                position: 'absolute',
+                top: 0,
+                left: '10%',
+                right: '10%',
+                height: '1px',
+                background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
+            }} />
+            {children}
+        </div>
+    );
+});
 
 const ServiceCard = ({ title, description, color, icon, delay, isRTL }) => (
     <Card delay={delay}>

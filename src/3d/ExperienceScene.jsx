@@ -1,113 +1,96 @@
-import React, { useRef, useMemo } from 'react';
+import React, { useRef, useMemo, lazy, Suspense } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import {
   Float,
   PerspectiveCamera,
   ScrollControls,
-  Stars,
-  Sparkles,
-  Environment,
   Scroll,
   useTexture,
-  useScroll,
 } from '@react-three/drei';
-import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
-import { BlendFunction } from 'postprocessing';
 import * as THREE from 'three';
 import Overlay from '../components/Overlay';
 import logoImg from '../assets/YMZ Media.png';
 
-// Small Floating Crystal
-const FloatingCrystal = ({ position, color, scale = 1, speed = 1 }) => {
-  const meshRef = useRef();
+// Lazy load heavy effects - only load on powerful devices
+const LazyEffects = lazy(() => import('./Effects'));
 
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.x += 0.008 * speed;
-      meshRef.current.rotation.y += 0.01 * speed;
-      meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * speed) * 0.2;
+// Simplified star field using instanced mesh for better performance
+const SimpleStars = ({ count = 500 }) => {
+  const mesh = useRef();
+
+  const positions = useMemo(() => {
+    const pos = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
+      pos[i * 3] = (Math.random() - 0.5) * 100;
+      pos[i * 3 + 1] = (Math.random() - 0.5) * 100;
+      pos[i * 3 + 2] = -Math.random() * 50;
     }
-  });
+    return pos;
+  }, [count]);
 
   return (
-    <mesh ref={meshRef} position={position} scale={scale}>
-      <octahedronGeometry args={[0.15, 0]} />
-      <meshStandardMaterial
-        color={color}
-        transparent
-        opacity={0.7}
-        roughness={0.1}
-        metalness={0.9}
-        emissive={color}
-        emissiveIntensity={0.2}
-      />
-    </mesh>
-  );
-};
-
-// Small Floating Sphere
-const FloatingSphere = ({ position, color, scale = 1, speed = 1 }) => {
-  const meshRef = useRef();
-
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * speed + position[0]) * 0.15;
-      meshRef.current.position.x = position[0] + Math.sin(state.clock.elapsedTime * speed * 0.5) * 0.1;
-    }
-  });
-
-  return (
-    <mesh ref={meshRef} position={position} scale={scale}>
-      <sphereGeometry args={[0.1, 16, 16]} />
-      <meshStandardMaterial
-        color={color}
+    <points ref={mesh}>
+      <bufferGeometry>
+        <bufferAttribute
+          attach="attributes-position"
+          count={count}
+          array={positions}
+          itemSize={3}
+        />
+      </bufferGeometry>
+      <pointsMaterial
+        size={0.5}
+        color="#ffffff"
         transparent
         opacity={0.6}
-        roughness={0.2}
-        metalness={0.8}
-        emissive={color}
-        emissiveIntensity={0.3}
+        sizeAttenuation
       />
-    </mesh>
+    </points>
   );
 };
 
-// Small Floating Ring
-const FloatingRing = ({ position, color, scale = 1, speed = 1 }) => {
+// Optimized floating shape - uses simpler geometry
+const FloatingShape = ({ position, color, scale = 1, speed = 1, type = 0 }) => {
   const meshRef = useRef();
+  const initialY = useRef(position[1]);
 
   useFrame((state) => {
     if (meshRef.current) {
-      meshRef.current.rotation.x += 0.005 * speed;
-      meshRef.current.rotation.y += 0.008 * speed;
-      meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * speed) * 0.1;
+      const time = state.clock.elapsedTime * speed;
+      meshRef.current.rotation.x += 0.003;
+      meshRef.current.rotation.y += 0.005;
+      meshRef.current.position.y = initialY.current + Math.sin(time) * 0.15;
     }
   });
 
+  // Use simpler geometries with lower polygon count
+  const geometry = useMemo(() => {
+    switch (type) {
+      case 0: return <octahedronGeometry args={[0.15, 0]} />;
+      case 1: return <sphereGeometry args={[0.1, 8, 8]} />; // Reduced from 16,16
+      default: return <torusGeometry args={[0.1, 0.03, 6, 12]} />; // Reduced segments
+    }
+  }, [type]);
+
   return (
     <mesh ref={meshRef} position={position} scale={scale}>
-      <torusGeometry args={[0.12, 0.03, 8, 24]} />
-      <meshStandardMaterial
+      {geometry}
+      <meshBasicMaterial
         color={color}
         transparent
         opacity={0.5}
-        roughness={0.1}
-        metalness={0.9}
-        emissive={color}
-        emissiveIntensity={0.2}
       />
     </mesh>
   );
 };
 
-// Logo - floating but NOT rotating
+// Logo - simple floating plane
 const LogoModel = ({ ...props }) => {
   const texture = useTexture(logoImg);
   const meshRef = useRef();
 
   useFrame((state) => {
     if (meshRef.current) {
-      // Only gentle floating, no rotation
       meshRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
     }
   });
@@ -125,76 +108,72 @@ const LogoModel = ({ ...props }) => {
 const SceneContent = () => {
   const { viewport } = useThree();
 
-  // Decorative small shapes scattered throughout
+  // Reduced number of decorative elements (from 30 to 15)
   const decorativeElements = useMemo(() => {
     const elements = [];
     const colors = ['#00f5ff', '#8b5cf6', '#ff00aa', '#ffd700', '#10b981'];
 
-    // Generate random small decorative elements
-    for (let i = 0; i < 30; i++) {
-      const x = (Math.random() - 0.5) * 12;
-      const y = -Math.random() * viewport.height * 4;
-      const z = -2 - Math.random() * 5;
-      const color = colors[Math.floor(Math.random() * colors.length)];
-      const scale = 0.3 + Math.random() * 0.5;
-      const speed = 0.5 + Math.random() * 1;
-      const type = Math.floor(Math.random() * 3);
-
-      elements.push({ x, y, z, color, scale, speed, type, key: i });
+    for (let i = 0; i < 15; i++) {
+      elements.push({
+        x: (Math.random() - 0.5) * 12,
+        y: -Math.random() * viewport.height * 4,
+        z: -2 - Math.random() * 5,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        scale: 0.4 + Math.random() * 0.4,
+        speed: 0.5 + Math.random() * 0.8,
+        type: Math.floor(Math.random() * 3),
+        key: i,
+      });
     }
     return elements;
   }, [viewport.height]);
 
   return (
-    <>
-      <Scroll>
-        {/* Logo - floating in hero section, not rotating */}
-        <Float speed={1} rotationIntensity={0} floatIntensity={0.3}>
-          <group position={[2.2, 0.3, 0]}>
-            <LogoModel />
-          </group>
-        </Float>
+    <Scroll>
+      {/* Logo */}
+      <Float speed={1} rotationIntensity={0} floatIntensity={0.3}>
+        <group position={[2.2, 0.3, 0]}>
+          <LogoModel />
+        </group>
+      </Float>
 
-        {/* Small decorative elements scattered throughout */}
-        {decorativeElements.map((el) => {
-          if (el.type === 0) {
-            return (
-              <FloatingCrystal
-                key={el.key}
-                position={[el.x, el.y, el.z]}
-                color={el.color}
-                scale={el.scale}
-                speed={el.speed}
-              />
-            );
-          } else if (el.type === 1) {
-            return (
-              <FloatingSphere
-                key={el.key}
-                position={[el.x, el.y, el.z]}
-                color={el.color}
-                scale={el.scale}
-                speed={el.speed}
-              />
-            );
-          } else {
-            return (
-              <FloatingRing
-                key={el.key}
-                position={[el.x, el.y, el.z]}
-                color={el.color}
-                scale={el.scale}
-                speed={el.speed}
-              />
-            );
-          }
-        })}
-      </Scroll>
-    </>
+      {/* Decorative elements */}
+      {decorativeElements.map((el) => (
+        <FloatingShape
+          key={el.key}
+          position={[el.x, el.y, el.z]}
+          color={el.color}
+          scale={el.scale}
+          speed={el.speed}
+          type={el.type}
+        />
+      ))}
+    </Scroll>
   );
 };
 
+// Effects fallback for when lazy loading
+const EffectsFallback = () => null;
+
 const Experience = () => {
+  // Detect if device can handle heavy effects
+  const canHandleEffects = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    // Check for powerful GPU indicators
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    if (!gl) return false;
+    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+    if (debugInfo) {
+      const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+      // Disable effects on mobile/integrated GPUs
+      if (renderer.includes('Intel') || renderer.includes('Mali') || renderer.includes('Adreno')) {
+        return false;
+      }
+    }
+    return window.innerWidth > 768;
+  }, []);
+
   return (
     <ScrollControls pages={6.3} damping={0.25}>
       <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={60} />
@@ -203,59 +182,22 @@ const Experience = () => {
       <color attach="background" args={['#030308']} />
       <fog attach="fog" args={['#030308', 10, 30]} />
 
-      {/* Lighting */}
-      <ambientLight intensity={0.5} color="#ffffff" />
-      <directionalLight position={[5, 5, 5]} intensity={1} color="#ffffff" />
-      <pointLight position={[0, 5, 0]} intensity={0.5} color="#00f5ff" distance={20} />
-      <pointLight position={[-5, 0, 5]} intensity={0.3} color="#ff00aa" distance={15} />
+      {/* Simplified lighting */}
+      <ambientLight intensity={0.6} />
+      <directionalLight position={[5, 5, 5]} intensity={0.8} />
+      <pointLight position={[0, 5, 0]} intensity={0.3} color="#00f5ff" distance={15} />
 
-      {/* Stars background */}
-      <Stars
-        radius={150}
-        depth={80}
-        count={2000}
-        factor={4}
-        saturation={0}
-        fade
-        speed={0.3}
-      />
-
-      {/* Sparkles */}
-      <Sparkles
-        count={80}
-        scale={15}
-        size={2}
-        speed={0.2}
-        opacity={0.5}
-        color="#00f5ff"
-      />
-      <Sparkles
-        count={40}
-        scale={12}
-        size={1.5}
-        speed={0.3}
-        opacity={0.3}
-        color="#8b5cf6"
-      />
-
-      <Environment preset="night" blur={0.8} />
+      {/* Optimized stars */}
+      <SimpleStars count={500} />
 
       <SceneContent />
 
-      {/* Post-processing */}
-      <EffectComposer disableNormalPass>
-        <Bloom
-          luminanceThreshold={0.9}
-          mipmapBlur
-          intensity={0.5}
-          radius={0.5}
-        />
-        <Vignette
-          offset={0.3}
-          darkness={0.5}
-          blendFunction={BlendFunction.NORMAL}
-        />
-      </EffectComposer>
+      {/* Lazy load heavy post-processing only on capable devices */}
+      {canHandleEffects && (
+        <Suspense fallback={<EffectsFallback />}>
+          <LazyEffects />
+        </Suspense>
+      )}
 
       <Overlay />
     </ScrollControls>
