@@ -73,16 +73,111 @@
   <meta name="geo.position" content="30.0444;31.2357" />
   <meta name="ICBM" content="30.0444, 31.2357" />
 
-  <!-- DNS Prefetch & Preconnect -->
-  <link rel="dns-prefetch" href="//fonts.googleapis.com" />
-  <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+  <!-- PERFORMANCE OPTIMIZATION: Preconnect to critical origins -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+  <link rel="dns-prefetch" href="//fonts.gstatic.com" />
 
-  <!-- Google Fonts: Inter, Outfit, and Tajawal for Arabic -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&family=Tajawal:wght@400;500;700;800;900&display=swap"
-    rel="stylesheet" />
+  <!-- PERFORMANCE: Preload critical font files -->
+  <link rel="preload" href="https://fonts.gstatic.com/s/outfit/v11/QGYyz_MVcBeNP4NjuGObqx1XmO1I4TC1O4a0EwItq6fNIg.woff2"
+    as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="https://fonts.gstatic.com/s/tajawal/v9/Iura6YBj_oCad4k1nzGBDw.woff2" as="font"
+    type="font/woff2" crossorigin />
+
+  <!-- PERFORMANCE: Load Google Fonts with display=swap and media=print trick for non-blocking -->
+  <link rel="preload"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Outfit:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800&display=swap"
+    as="style" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Outfit:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800&display=swap"
+      rel="stylesheet" />
+  </noscript>
+
+  <!-- Critical CSS Inline for LCP -->
+  <style>
+    /* Critical CSS for initial render */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    html {
+      scroll-behavior: smooth
+    }
+
+    body {
+      font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+      background: #050510;
+      color: #fff;
+      line-height: 1.6;
+      overflow-x: hidden;
+      min-height: 100vh
+    }
+
+    #root {
+      min-height: 100vh
+    }
+
+    .hero-title {
+      font-size: clamp(4rem, 12vw, 9rem);
+      font-weight: 900;
+      line-height: .85;
+      margin-bottom: 1.5rem;
+      font-family: 'Outfit', 'Inter', sans-serif;
+      background: linear-gradient(135deg, #00f5ff 0%, #8b5cf6 50%, #ff00aa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text
+    }
+
+    .section-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 2rem 10%;
+      position: relative
+    }
+
+    .section-title {
+      background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, .7) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text
+    }
+
+    /* Loading spinner */
+    .loading-screen {
+      position: fixed;
+      inset: 0;
+      background: #050510;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999
+    }
+
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 3px solid rgba(0, 245, 255, .2);
+      border-top-color: #00f5ff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+  </style>
 
   <!-- Schema.org JSON-LD Structured Data -->
   <script type="application/ld+json">
@@ -282,12 +377,33 @@
         }
       ]
     }
-    </script>
+  </script>
 </head>
 
 <body>
-  <div id="root"></div>
+  <!-- Initial Loading State for LCP improvement -->
+  <div id="root">
+    <div class="loading-screen" id="initial-loader">
+      <div class="loading-spinner"></div>
+    </div>
+  </div>
   <script type="module" src="/src/main.jsx"></script>
+
+  <!-- Remove initial loader once React mounts -->
+  <script>
+    window.addEventListener('DOMContentLoaded', function () {
+      var loader = document.getElementById('initial-loader');
+      if (loader) {
+        setTimeout(function () {
+          loader.style.opacity = '0';
+          loader.style.transition = 'opacity 0.3s ease';
+          setTimeout(function () {
+            loader.remove();
+          }, 300);
+        }, 100);
+      }
+    });
+  </script>
 </body>
 
 </html>
