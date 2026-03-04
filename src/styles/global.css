@@ -641,6 +641,30 @@ footer {
     gap: var(--spacing-lg);
   }
 
+  /* Hamburger Menu Layout Adjustments */
+  .header .nav ul {
+    display: none !important;
+    /* Hide desktop nav links */
+  }
+
+  .mobile-menu-btn {
+    display: flex !important;
+    /* Show hamburger button */
+  }
+
+  .mobile-sidebar-overlay {
+    display: block !important;
+  }
+
+  .mobile-sidebar {
+    display: flex !important;
+  }
+
+  .lang-toggle-btn {
+    padding: 0.3rem 0.6rem !important;
+    font-size: 0.75rem !important;
+  }
+
   .contact-container {
     padding: var(--spacing-xl);
   }
