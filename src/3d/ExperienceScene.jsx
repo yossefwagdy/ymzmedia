@@ -108,12 +108,14 @@ const LogoModel = ({ ...props }) => {
 const SceneContent = () => {
   const { viewport } = useThree();
 
-  // Reduced number of decorative elements (from 30 to 15)
+  // Reduced number of decorative elements on mobile
   const decorativeElements = useMemo(() => {
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    const elementCount = isMobile ? 5 : 15;
     const elements = [];
     const colors = ['#00f5ff', '#8b5cf6', '#ff00aa', '#ffd700', '#10b981'];
 
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < elementCount; i++) {
       elements.push({
         x: (Math.random() - 0.5) * 12,
         y: -Math.random() * viewport.height * 4,
@@ -188,7 +190,7 @@ const Experience = () => {
       <pointLight position={[0, 5, 0]} intensity={0.3} color="#00f5ff" distance={15} />
 
       {/* Optimized stars */}
-      <SimpleStars count={500} />
+      <SimpleStars count={typeof window !== 'undefined' && window.innerWidth < 768 ? 150 : 500} />
 
       <SceneContent />
 

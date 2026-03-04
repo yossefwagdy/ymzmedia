@@ -9,6 +9,9 @@ const BackToTop = lazy(() => import('./components/BackToTop'));
 const Canvas = lazy(() =>
   import('@react-three/fiber').then(mod => ({ default: mod.Canvas }))
 );
+const PerformanceMonitor = lazy(() =>
+  import('@react-three/drei').then(mod => ({ default: mod.PerformanceMonitor }))
+);
 const Experience = lazy(() => import('./3d/ExperienceScene'));
 
 // Lightweight loading screen - pure CSS, no libraries
@@ -100,6 +103,7 @@ const LayoutFallback = memo(() => (
 function App() {
   const [isLoading, setIsLoading] = useState(false); // Start as false for instant LCP
   const [showCanvas, setShowCanvas] = useState(false);
+  const [dpr, setDpr] = useState(1);
   const { isRTL } = useLanguage();
 
   // Defer 3D canvas loading
@@ -148,7 +152,7 @@ function App() {
                     alpha: false,
                     preserveDrawingBuffer: false,
                   }}
-                  dpr={[1, 1.5]}
+                  dpr={dpr}
                   performance={{ min: 0.5 }}
                   resize={{ scroll: false, debounce: { scroll: 50, resize: 100 } }}
                   flat
@@ -159,6 +163,12 @@ function App() {
                     })(gl.setSize.bind(gl));
                   }}
                 >
+                  <PerformanceMonitor
+                    onIncline={() => setDpr(1.5)}
+                    onDecline={() => setDpr(0.75)}
+                    flipflops={3}
+                    onFallback={() => setDpr(0.5)}
+                  />
                   <Experience />
                 </Canvas>
               </Suspense>
