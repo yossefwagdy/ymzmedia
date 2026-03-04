@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState, memo, useMemo, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { Scroll } from '@react-three/drei';
 import { motion } from 'framer-motion';
 import StatsCounter from './StatsCounter';
@@ -110,10 +111,14 @@ const ServiceCard = ({ title, description, color, icon, delay, isRTL }) => (
     </Card>
 );
 
-// Video Project Card - Opens in new tab
-const VideoProjectCard = ({ title, videoUrl, category, color, delay, isRTL }) => {
+// Video Project Card - Opens in modal
+const VideoProjectCard = ({ title, videoUrl, category, color, delay, isRTL, onSelect }) => {
     const handleClick = () => {
-        window.open(videoUrl, '_blank', 'noopener,noreferrer');
+        if (onSelect) {
+            onSelect(videoUrl);
+        } else {
+            window.open(videoUrl, '_blank', 'noopener,noreferrer');
+        }
     };
 
     return (
@@ -302,6 +307,7 @@ const TestimonialCard = ({ name, role, company, content, delay, isRTL }) => (
 
 const Overlay = () => {
     const { language, isRTL, t } = useLanguage();
+    const [selectedVideo, setSelectedVideo] = useState(null);
 
     const services = [
         {
@@ -531,6 +537,7 @@ const Overlay = () => {
                                 {...project}
                                 delay={index * 0.1}
                                 isRTL={isRTL}
+                                onSelect={(url) => setSelectedVideo(url)}
                             />
                         ))}
                     </div>
@@ -903,6 +910,77 @@ const Overlay = () => {
                     </p>
                 </div>
             </footer>
+
+            {/* Video Modal Portal */}
+            {selectedVideo && createPortal(
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    width: '100vw',
+                    height: '100vh',
+                    backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                    zIndex: 999999,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '1rem'
+                }} onClick={() => setSelectedVideo(null)}>
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9 }}
+                        style={{
+                            width: '100%',
+                            maxWidth: '1000px',
+                            aspectRatio: '16/9',
+                            backgroundColor: '#000',
+                            borderRadius: '16px',
+                            overflow: 'hidden',
+                            position: 'relative',
+                            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <button
+                            onClick={() => setSelectedVideo(null)}
+                            style={{
+                                position: 'absolute',
+                                top: '15px',
+                                right: '15px',
+                                background: 'rgba(255, 255, 255, 0.2)',
+                                backdropFilter: 'blur(10px)',
+                                border: 'none',
+                                color: '#fff',
+                                width: '40px',
+                                height: '40px',
+                                borderRadius: '50%',
+                                cursor: 'pointer',
+                                zIndex: 10,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '24px',
+                                transition: 'background 0.3s ease'
+                            }}
+                            onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)'}
+                            onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'}
+                        >
+                            &times;
+                        </button>
+                        <iframe
+                            width="100%"
+                            height="100%"
+                            src={selectedVideo.replace('watch?v=', 'embed/')}
+                            title="YouTube Video Player"
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                        ></iframe>
+                    </motion.div>
+                </div>,
+                document.body
+            )}
         </Scroll>
     );
 };
