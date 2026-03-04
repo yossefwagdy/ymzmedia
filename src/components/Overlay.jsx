@@ -682,7 +682,9 @@ const Overlay = () => {
                         </p>
 
                         <motion.a
-                            href="mailto:contact@ymzmedia.com"
+                            href="https://fb.com/ymzmedia"
+                            target="_blank"
+                            rel="noopener noreferrer"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.98 }}
                             style={{

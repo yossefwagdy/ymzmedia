@@ -176,8 +176,22 @@ const Experience = () => {
     return window.innerWidth > 768;
   }, []);
 
+  const scrollPages = useMemo(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      return 11; // More pages needed for mobile's vertical stacking
+    }
+    return 6.3;
+  }, []);
+
+  const scrollDamping = useMemo(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      return 0.15; // Faster, less delayed scroll on mobile
+    }
+    return 0.25;
+  }, []);
+
   return (
-    <ScrollControls pages={6.3} damping={0.25}>
+    <ScrollControls pages={scrollPages} damping={scrollDamping}>
       <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={60} />
 
       {/* Deep space background */}
