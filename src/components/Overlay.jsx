@@ -173,7 +173,7 @@ const VideoProjectCard = ({ title, videoUrl, category, color, delay, isRTL }) =>
                 </motion.div>
             </div>
 
-            {/* Facebook icon badge */}
+            {/* YouTube icon badge */}
             <div style={{
                 position: 'absolute',
                 top: '1rem',
@@ -181,13 +181,13 @@ const VideoProjectCard = ({ title, videoUrl, category, color, delay, isRTL }) =>
                 width: '36px',
                 height: '36px',
                 borderRadius: '50%',
-                background: 'rgba(24, 119, 242, 0.9)',
+                background: 'rgba(255, 0, 0, 0.9)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
             }}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff">
-                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                    <path d="M21.582 6.186a2.63 2.63 0 0 0-1.854-1.868C18.093 3.88 12 3.88 12 3.88s-6.094 0-7.728.438A2.63 2.63 0 0 0 2.418 6.186C2 7.828 2 12 2 12s0 4.172.418 5.814a2.63 2.63 0 0 0 1.854 1.868c1.634.438 7.728.438 7.728.438s6.094 0 7.728-.438a2.63 2.63 0 0 0 1.854-1.868C22 16.172 22 12 22 12s0-4.172-.418-5.814zM9.995 15.424V8.576L15.938 12l-5.943 3.424z" />
                 </svg>
             </div>
 
@@ -330,31 +330,49 @@ const Overlay = () => {
         }
     ];
 
-    // Facebook Video Projects with colors
+    // YouTube Video Projects with colors
     const projects = [
         {
-            title: isRTL ? 'اعلان رسمي لنادي الكهرباء' : 'ElKahraba Club Official Ad',
+            title: isRTL ? 'اعلان رز الوفير' : 'Al Wafir Rice Commercial',
             category: t('videoProduction'),
-            videoUrl: 'https://www.facebook.com/share/v/17mtwnaMqd/',
-            color: '#00f5ff'
+            videoUrl: 'https://www.youtube.com/watch?v=86ilY-vrTXU',
+            color: '#ffd700'
         },
         {
-            title: isRTL ? 'اعلان لشركة Falcon Group' : 'Falcon Group Commercial',
+            title: isRTL ? 'اعلان مستشفي 57357' : '57357 Hospital Commercial',
             category: t('videoProduction'),
-            videoUrl: 'https://www.facebook.com/share/r/1DNocGpcT4/',
-            color: '#8b5cf6'
-        },
-        {
-            title: isRTL ? 'اعلان لقاعات الدرة' : 'ElDurrah Halls Commercial',
-            category: t('videoProduction'),
-            videoUrl: 'https://www.facebook.com/share/v/17vaTJ8hmB/',
+            videoUrl: 'https://www.youtube.com/watch?v=nkKmPEnM_lk',
             color: '#ff00aa'
         },
         {
-            title: isRTL ? 'اعلان رز الوفير' : 'AlWafir Rice Commercial',
+            title: isRTL ? 'مسلسل الكينج' : 'El King Series',
             category: t('videoProduction'),
-            videoUrl: 'https://www.facebook.com/share/v/1C4ndpJuxG/',
-            color: '#ffd700'
+            videoUrl: 'https://www.youtube.com/watch?v=LH8kruvVWhk',
+            color: '#8b5cf6'
+        },
+        {
+            title: isRTL ? 'اعلان فالكون جروب' : 'Falcon Group Commercial',
+            category: t('videoProduction'),
+            videoUrl: 'https://www.youtube.com/watch?v=l5mkttzhk_w',
+            color: '#00f5ff'
+        },
+        {
+            title: isRTL ? 'معلم تاريخ' : 'History Teacher',
+            category: t('videoProduction'),
+            videoUrl: 'https://www.youtube.com/watch?v=Y-CHJSjxHXU',
+            color: '#10b981'
+        },
+        {
+            title: isRTL ? 'سابق زمانك' : 'Sabe2 Zamanak',
+            category: t('videoProduction'),
+            videoUrl: 'https://www.youtube.com/watch?v=UGsjnnFrbE4',
+            color: '#ff4500'
+        },
+        {
+            title: isRTL ? 'قاعة افراح' : 'Wedding Hall Commercial',
+            category: t('videoProduction'),
+            videoUrl: 'https://www.youtube.com/watch?v=JjDPjF3VHt0',
+            color: '#1e90ff'
         },
     ];
 
@@ -499,7 +517,7 @@ const Overlay = () => {
                         marginBottom: '3rem',
                         fontFamily: isRTL ? 'Tajawal, sans-serif' : 'inherit',
                     }}>
-                        {isRTL ? 'اضغط على أي مشروع لمشاهدة الفيديو على فيسبوك' : 'Click on any project to watch the video on Facebook'}
+                        {isRTL ? 'اضغط على أي مشروع لمشاهدة الفيديو على يوتيوب' : 'Click on any project to watch the video on YouTube'}
                     </p>
 
                     <div style={{
