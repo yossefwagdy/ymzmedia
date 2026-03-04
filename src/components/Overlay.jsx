@@ -11,6 +11,12 @@ const useInView = (threshold = 0.1) => {
     const ref = useRef(null);
     const [isInView, setIsInView] = useState(false);
     useEffect(() => {
+        // Bypass for mobile to prevent scroll lag
+        if (typeof window !== 'undefined' && window.innerWidth < 768) {
+            setIsInView(true);
+            return;
+        }
+
         const element = ref.current;
         if (!element) return;
         const observer = new IntersectionObserver(
@@ -125,6 +131,7 @@ const VideoProjectCard = ({ title, videoUrl, category, color, delay, isRTL, onSe
         <motion.div
             initial={{ opacity: 0, y: 30, scale: 0.95 }}
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, margin: "2000px" }}
             transition={{ duration: 0.6, delay }}
             whileHover={{ y: -10, scale: 1.02 }}
             onClick={handleClick}
@@ -248,6 +255,7 @@ const TestimonialCard = ({ name, role, company, content, delay, isRTL }) => (
     <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "2000px" }}
         transition={{ duration: 0.6, delay }}
         whileHover={{ y: -5 }}
         style={{
@@ -469,6 +477,7 @@ const Overlay = () => {
                     <motion.h2
                         initial={{ opacity: 0, x: isRTL ? 50 : -50 }}
                         whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true, margin: "2000px" }}
                         className="section-title"
                         style={{
                             marginBottom: '3rem',
@@ -506,6 +515,7 @@ const Overlay = () => {
                     <motion.h2
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "2000px" }}
                         className="section-title"
                         style={{
                             marginBottom: '1rem',
@@ -550,6 +560,7 @@ const Overlay = () => {
                     <motion.h2
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "2000px" }}
                         className="section-title"
                         style={{
                             marginBottom: '1rem',
@@ -593,6 +604,7 @@ const Overlay = () => {
                     <motion.h2
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "2000px" }}
                         className="section-title"
                         style={{
                             marginBottom: '2.5rem',
@@ -614,6 +626,7 @@ const Overlay = () => {
                                 key={client}
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true, margin: "2000px" }}
                                 transition={{ delay: index * 0.08 }}
                                 whileHover={{ scale: 1.05, borderColor: 'rgba(0, 245, 255, 0.5)' }}
                                 style={{
@@ -641,6 +654,7 @@ const Overlay = () => {
                     <motion.h2
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "2000px" }}
                         className="section-title"
                         style={{
                             marginBottom: '2.5rem',
@@ -662,6 +676,7 @@ const Overlay = () => {
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "2000px" }}
                     >
                         <h2 className="section-title" style={{
                             marginBottom: '1.5rem',
