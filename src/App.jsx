@@ -1,186 +1,32 @@
-import React, { useState, useEffect, lazy, Suspense, memo } from 'react';
-import { useLanguage } from './context/LanguageContext';
-
-// Lazy load ALL heavy components
-const Layout = lazy(() => import('./components/Layout'));
-const BackToTop = lazy(() => import('./components/BackToTop'));
-
-// Super lazy load 3D - only after everything else is ready
-const Canvas = lazy(() =>
-  import('@react-three/fiber').then(mod => ({ default: mod.Canvas }))
-);
-const PerformanceMonitor = lazy(() =>
-  import('@react-three/drei').then(mod => ({ default: mod.PerformanceMonitor }))
-);
-const Experience = lazy(() => import('./3d/ExperienceScene'));
-
-// Lightweight loading screen - pure CSS, no libraries
-const LoadingScreen = memo(() => (
-  <div
-    style={{
-      position: 'fixed',
-      inset: 0,
-      background: 'linear-gradient(135deg, #030308 0%, #0a0a1a 50%, #050510 100%)',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 9999,
-    }}
-  >
-    <div
-      style={{
-        fontSize: 'clamp(2rem, 5vw, 4rem)',
-        fontWeight: '900',
-        fontFamily: 'Outfit, Inter, sans-serif',
-        background: 'linear-gradient(135deg, #00f5ff, #8b5cf6, #ff00aa)',
-        WebkitBackgroundClip: 'text',
-        WebkitTextFillColor: 'transparent',
-        backgroundClip: 'text',
-        marginBottom: '2rem',
-      }}
-    >
-      YMZ MEDIA
-    </div>
-    <div style={{
-      width: '200px',
-      height: '3px',
-      background: 'rgba(255, 255, 255, 0.1)',
-      borderRadius: '10px',
-      overflow: 'hidden',
-    }}>
-      <div
-        style={{
-          width: '50%',
-          height: '100%',
-          background: 'linear-gradient(90deg, transparent, #00f5ff, #8b5cf6, transparent)',
-          borderRadius: '10px',
-          animation: 'loading 1s ease-in-out infinite',
-        }}
-      />
-    </div>
-    <style>{`
-      @keyframes loading {
-        0% { transform: translateX(-200%); }
-        100% { transform: translateX(200%); }
-      }
-    `}</style>
-  </div>
-));
-
-// Canvas loader - shows while 3D loads
-const CanvasLoader = memo(() => (
-  <div style={{
-    position: 'fixed',
-    inset: 0,
-    background: 'transparent',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 50,
-    pointerEvents: 'none',
-  }}>
-    <div style={{
-      width: '40px',
-      height: '40px',
-      border: '3px solid rgba(0, 245, 255, 0.2)',
-      borderTopColor: '#00f5ff',
-      borderRadius: '50%',
-      animation: 'spin 1s linear infinite',
-    }} />
-    <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-  </div>
-));
-
-// Layout fallback
-const LayoutFallback = memo(() => (
-  <div style={{
-    minHeight: '100vh',
-    background: '#050510',
-  }} />
-));
+import React from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import Layout from './components/Layout';
+import HomePage from './pages/HomePage';
+import ServicesPage from './pages/ServicesPage';
+import ServiceDetailsPage from './pages/ServiceDetailsPage';
+import BlogPage from './pages/BlogPage';
+import BlogPostPage from './pages/BlogPostPage';
+import AboutPage from './pages/AboutPage';
+import AgentsPage from './pages/AgentsPage';
+import ContactPage from './pages/ContactPage';
+import CertificatesPage from './pages/CertificatesPage';
 
 function App() {
-  const [isLoading, setIsLoading] = useState(false); // Start as false for instant LCP
-  const [showCanvas, setShowCanvas] = useState(false);
-  const [dpr, setDpr] = useState(1);
-  const { isRTL } = useLanguage();
-
-  // Defer 3D canvas loading
-  useEffect(() => {
-    const loadCanvas = () => {
-      setShowCanvas(true);
-    };
-
-    if ('requestIdleCallback' in window) {
-      window.requestIdleCallback(loadCanvas, { timeout: 1500 });
-    } else {
-      setTimeout(loadCanvas, 300);
-    }
-  }, []);
-
-  // Update document direction
-  useEffect(() => {
-    document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
-    document.documentElement.lang = isRTL ? 'ar' : 'en';
-  }, [isRTL]);
-
   return (
-    <>
-      {isLoading && <LoadingScreen />}
-
-      <Suspense fallback={<LayoutFallback />}>
-        <Layout>
-          <div
-            className="canvas-container"
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100vh',
-              opacity: isLoading ? 0 : 1,
-              transition: 'opacity 0.5s ease',
-            }}
-          >
-            {showCanvas && (
-              <Suspense fallback={<CanvasLoader />}>
-                <Canvas
-                  gl={{
-                    antialias: false,
-                    powerPreference: 'high-performance',
-                    alpha: false,
-                    preserveDrawingBuffer: false,
-                  }}
-                  dpr={dpr}
-                  performance={{ min: 0.5 }}
-                  resize={{ scroll: false, debounce: { scroll: 50, resize: 100 } }}
-                  flat
-                  onCreated={({ gl }) => {
-                    // Prevent forced reflow by scheduling resize
-                    gl.setSize = ((original) => (...args) => {
-                      requestAnimationFrame(() => original.apply(gl, args));
-                    })(gl.setSize.bind(gl));
-                  }}
-                >
-                  <PerformanceMonitor
-                    onIncline={() => setDpr(1.5)}
-                    onDecline={() => setDpr(0.75)}
-                    flipflops={3}
-                    onFallback={() => setDpr(0.5)}
-                  />
-                  <Experience />
-                </Canvas>
-              </Suspense>
-            )}
-          </div>
-        </Layout>
-      </Suspense>
-
-      <Suspense fallback={null}>
-        <BackToTop />
-      </Suspense>
-    </>
+    <Routes>
+      <Route element={<Layout />}>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/services" element={<ServicesPage />} />
+        <Route path="/services/:id" element={<ServiceDetailsPage />} />
+        <Route path="/blog" element={<BlogPage />} />
+        <Route path="/blog/:id" element={<BlogPostPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/agents" element={<AgentsPage />} />
+        <Route path="/certificates" element={<CertificatesPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Route>
+    </Routes>
   );
 }
 

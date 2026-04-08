@@ -81,14 +81,17 @@ const PartnerItem = memo(({ item, index }) => {
 const PartnerGrid = memo(({ items }) => {
     return (
         <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-            gap: '1rem',
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
             alignItems: 'center',
-            justifyItems: 'center'
+            gap: '1rem',
+            width: '100%'
         }}>
             {items.map((item, index) => (
-                <PartnerItem key={index} item={item} index={index} />
+                <div key={index} style={{ width: '140px', maxWidth: '100%' }}>
+                    <PartnerItem item={item} index={index} />
+                </div>
             ))}
         </div>
     );
